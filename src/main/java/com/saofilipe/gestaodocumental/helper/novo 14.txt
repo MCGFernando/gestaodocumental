@@ -1,0 +1,71 @@
+AcessosPermicoes
+ id
+ dataHoraAcesso
+ nivelAcesso
+ tipoAccao
+ ipOrigem
+ historicoAcesso
+ 
+Documento
+	id
+	nomeDocumento
+	tipoDocumento
+	dataCriacaoDocumento
+	descricaoDocumento
+	referencias
+	
+PrazosRetencao
+	id
+	prazoRetencao
+	
+	
+	String sql = "DELETE FROM documentos WHERE id=?";
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace(); // Trate a exceção apropriadamente em um ambiente real
+        }
+		
+		
+		/**/
+		
+		String sql = "SELECT * FROM documentos WHERE id=?";
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                if (resultSet.next()) {
+                    return mapearDocumento(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Trate a exceção apropriadamente em um ambiente real
+        }
+        return null;
+		
+		/**/
+		
+		List<Documento> listaDocumentos = new ArrayList<>();
+        String sql = "SELECT * FROM documentos";
+        try (PreparedStatement stmt = conexao.prepareStatement(sql);
+             ResultSet resultSet = stmt.executeQuery()) {
+            while (resultSet.next()) {
+                listaDocumentos.add(mapearDocumento(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Trate a exceção apropriadamente em um ambiente real
+        }
+        return listaDocumentos;
+		
+		/**/
+		
+		private Documento mapearDocumento(ResultSet resultSet) throws SQLException {
+        Documento documento = new Documento();
+        documento.setId(resultSet.getLong("id"));
+        documento.setNomeDocumento(resultSet.getString("nomeDocumento"));
+        documento.setTipoDocumento(resultSet.getString("tipoDocumento"));
+        documento.setDataCriacaoDocumento(resultSet.getDate("dataCriacaoDocumento"));
+        documento.setDescricaoDocumento(resultSet.getString("descricaoDocumento"));
+        // Não incluí as referências no exemplo, mas você pode adicionar conforme necessário
+        return documento;
+    }
